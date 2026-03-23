@@ -1,114 +1,321 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>AG Habit Tracker</title>
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
-    body { font-family: Arial; background: #f5f5f5; margin: 0; padding: 20px; }
-    button { cursor: pointer; }
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --border:#e6e8ef;
+      --text:#111;
+      --sub:#6b7280;
+      --green:#1D9E75;
+      --purple:#7F77DD;
+      --blue:#378ADD;
+      --orange:#D85A30;
+    }
+
+    body{
+      margin:0;
+      font-family:-apple-system, system-ui, sans-serif;
+      background:var(--bg);
+      padding:20px;
+    }
+
+    .container{
+      max-width:520px;
+      margin:auto;
+    }
+
+    h1{margin:0;font-size:22px}
+    .sub{color:var(--sub);font-size:13px}
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:12px;
+      margin-bottom:10px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .btn{
+      padding:8px 12px;
+      border-radius:8px;
+      border:1px solid var(--border);
+      background:white;
+      cursor:pointer;
+    }
+
+    .circle{
+      width:36px;height:36px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+    }
+
+    .tabs{
+      display:flex;
+      gap:5px;
+      background:#eee;
+      padding:4px;
+      border-radius:10px;
+      margin:15px 0;
+    }
+
+    .tab{
+      flex:1;
+      text-align:center;
+      padding:6px;
+      border-radius:8px;
+      cursor:pointer;
+      font-size:13px;
+    }
+
+    .active{
+      background:white;
+      font-weight:600;
+    }
+
+    .progress{
+      height:6px;
+      background:#ddd;
+      border-radius:10px;
+      overflow:hidden;
+      margin-top:5px;
+    }
+
+    .bar{
+      height:100%;
+      background:var(--green);
+    }
+
+    .badge{
+      font-size:11px;
+      padding:2px 6px;
+      border-radius:999px;
+    }
+
+    .health{background:#E1F5EE;color:#085041}
+    .mind{background:#EEEDFE;color:#3C3489}
+    .work{background:#E6F1FB;color:#0C447C}
+    .personal{background:#FAECE7;color:#712B13}
+
+    .week{
+      display:grid;
+      grid-template-columns:1fr repeat(7,30px);
+      gap:4px;
+      align-items:center;
+    }
+
+    .box{
+      width:30px;height:30px;
+      border-radius:6px;
+      background:#eee;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+    }
+
+    .done{background:var(--green);color:white}
+
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.4);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+
+    .modalBox{
+      background:white;
+      padding:15px;
+      border-radius:12px;
+      width:90%;
+      max-width:400px;
+    }
+
   </style>
 </head>
 
 <body>
-  <div id="root"></div>
+<div class="container">
 
-  <script type="text/babel">
+  <h1>My habits</h1>
+  <div class="sub" id="date"></div>
 
-const { useState, useEffect } = React;
+  <button class="btn" onclick="openAdd()">+ Add</button>
 
-function dateKey(d) {
-  return d.toISOString().split("T")[0];
+  <div class="progress">
+    <div class="bar" id="progressBar"></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="setView('today')">Today</div>
+    <div class="tab" onclick="setView('week')">Week</div>
+    <div class="tab" onclick="setView('stats')">Stats</div>
+  </div>
+
+  <div id="content"></div>
+
+</div>
+
+<!-- MODAL -->
+<div id="modal" style="display:none" class="modal">
+  <div class="modalBox">
+    <h3>Add Habit</h3>
+    <input id="name" placeholder="Habit name" style="width:100%;margin-bottom:10px"/>
+    <select id="cat" style="width:100%">
+      <option value="health">Health</option>
+      <option value="mind">Mind</option>
+      <option value="work">Work</option>
+      <option value="personal">Personal</option>
+    </select>
+    <br><br>
+    <button onclick="addHabit()">Save</button>
+    <button onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<script>
+
+let habits = JSON.parse(localStorage.getItem("habits_v3")||"[]");
+let view="today";
+
+const todayKey = new Date().toISOString().split("T")[0];
+
+document.getElementById("date").innerText =
+  new Date().toDateString();
+
+function save(){
+  localStorage.setItem("habits_v3",JSON.stringify(habits));
 }
 
-function getStreak(completions = {}) {
-  let streak = 0;
-  const d = new Date();
-  while (completions[dateKey(d)]) {
-    streak++;
-    d.setDate(d.getDate() - 1);
-  }
-  return streak;
+function setView(v){
+  view=v;
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  event.target.classList.add("active");
+  render();
 }
 
-function App() {
-  const [habits, setHabits] = useState(() => {
-    const saved = localStorage.getItem("habits");
-    return saved ? JSON.parse(saved) : [
-      { id: 1, name: "Drink water", done: false, completions: {} },
-      { id: 2, name: "Workout", done: false, completions: {} }
-    ];
+function toggle(id,date=todayKey){
+  habits=habits.map(h=>{
+    if(h.id!==id) return h;
+    h.completions=h.completions||{};
+    h.completions[date]=!h.completions[date];
+    return h;
   });
-
-  const today = dateKey(new Date());
-
-  useEffect(() => {
-    localStorage.setItem("habits", JSON.stringify(habits));
-  }, [habits]);
-
-  const toggle = (id) => {
-    setHabits(habits.map(h => {
-      if (h.id !== id) return h;
-      const c = { ...h.completions };
-      c[today] = !c[today];
-      return { ...h, completions: c };
-    }));
-  };
-
-  const addHabit = () => {
-    const name = prompt("New habit:");
-    if (!name) return;
-    setHabits([...habits, {
-      id: Date.now(),
-      name,
-      completions: {}
-    }]);
-  };
-
-  return (
-    <div>
-      <h1>AG Habit Tracker</h1>
-      <button onClick={addHabit}>+ Add Habit</button>
-
-      {habits.map(h => {
-        const done = h.completions[today];
-        const streak = getStreak(h.completions);
-
-        return (
-          <div key={h.id} style={{
-            marginTop: 10,
-            padding: 10,
-            background: "white",
-            borderRadius: 8
-          }}>
-            <span
-              onClick={() => toggle(h.id)}
-              style={{
-                cursor: "pointer",
-                marginRight: 10
-              }}
-            >
-              {done ? "✅" : "⬜"}
-            </span>
-
-            {h.name}
-
-            {streak > 0 && (
-              <span style={{ marginLeft: 10, color: "orange" }}>
-                🔥 {streak}
-              </span>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
+  save();
+  render();
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+function getStreak(c){
+  let d=new Date();
+  let s=0;
+  while(c && c[d.toISOString().split("T")[0]]){
+    s++;
+    d.setDate(d.getDate()-1);
+  }
+  return s;
+}
 
-  </script>
+function openAdd(){
+  document.getElementById("modal").style.display="flex";
+}
+
+function closeModal(){
+  document.getElementById("modal").style.display="none";
+}
+
+function addHabit(){
+  let name=document.getElementById("name").value;
+  let cat=document.getElementById("cat").value;
+  if(!name) return;
+  habits.push({id:Date.now(),name,category:cat,completions:{}});
+  save();
+  closeModal();
+  render();
+}
+
+function render(){
+
+  let html="";
+
+  if(view==="today"){
+    let done=0;
+
+    habits.forEach(h=>{
+      let d=h.completions && h.completions[todayKey];
+      if(d) done++;
+
+      html+=`
+      <div class="card">
+        <div class="circle" onclick="toggle(${h.id})">
+          ${d?"✓":"○"}
+        </div>
+        <div style="flex:1">
+          <div>${h.name}</div>
+          <div class="badge ${h.category}">
+            ${h.category}
+          </div>
+          ${getStreak(h.completions)>0 ? `<div>🔥 ${getStreak(h.completions)}</div>`:""}
+        </div>
+      </div>`;
+    });
+
+    document.getElementById("progressBar").style.width =
+      habits.length ? (done/habits.length*100)+"%" : "0%";
+  }
+
+  if(view==="week"){
+    let days=[];
+    let now=new Date();
+    let start=new Date(now.setDate(now.getDate()-now.getDay()));
+    for(let i=0;i<7;i++){
+      let d=new Date(start);
+      d.setDate(start.getDate()+i);
+      days.push(d.toISOString().split("T")[0]);
+    }
+
+    habits.forEach(h=>{
+      html+=`<div class="week"><div>${h.name}</div>`;
+      days.forEach(d=>{
+        let done=h.completions && h.completions[d];
+        html+=`<div class="box ${done?"done":""}" onclick="toggle(${h.id},'${d}')">${done?"✓":""}</div>`;
+      });
+      html+=`</div>`;
+    });
+  }
+
+  if(view==="stats"){
+    let total=habits.length;
+    let todayDone=habits.filter(h=>h.completions && h.completions[todayKey]).length;
+
+    html+=`
+      <div class="card">Total habits: ${total}</div>
+      <div class="card">Done today: ${todayDone}</div>
+    `;
+
+    habits.forEach(h=>{
+      html+=`<div class="card">${h.name} 🔥 ${getStreak(h.completions)}</div>`;
+    });
+  }
+
+  document.getElementById("content").innerHTML=html;
+}
+
+render();
+
+</script>
+
 </body>
 </html>
