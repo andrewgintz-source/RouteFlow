@@ -1168,8 +1168,8 @@ function obAddPlanRow(name, price, desc) {
       '<input class="mini-inp ob-plan-desc" placeholder="Description (optional)" value="' + desc + '">' +
       '<select class="mini-inp ob-plan-cycle" style="font-size:13px">' +
         '<option value="monthly">Monthly</option>' +
-        '<option value="quarterly">Quarterly</option>' +
-        '<option value="biannual">Bi-annual</option>' +
+        '<option value="weekly">Weekly</option>' +
+        '<option value="biweekly">Bi-weekly</option>' +
         '<option value="annual">Annual</option>' +
       '</select>' +
     '</div>';
@@ -1913,8 +1913,8 @@ function renderSettingsPlanList() {
   if (!el || !userData) return;
   const cycleOptions = [
     {value:'monthly', label:'Monthly'},
-    {value:'quarterly', label:'Quarterly'},
-    {value:'biannual', label:'Bi-annual'},
+    {value:'weekly', label:'Weekly'},
+    {value:'biweekly', label:'Bi-weekly'},
     {value:'annual', label:'Annual'},
   ];
   el.innerHTML = userData.plans.map((plan, i) => {
