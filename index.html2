@@ -1,1 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RouteFlow</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0e12;--sf:#13161c;--sf2:#1a1e27;
+  --b:rgba(255,255,255,0.06);--b2:rgba(255,255,255,0.11);--b3:rgba(255,255,255,0.18);
+  --t:#eef0f5;--t2:#8b8fa8;--t3:#555a6e;
+  --g:#00d68f;--gd:rgba(0,214,143,0.12);--gm:rgba(0,214,143,0.25);
+  --am:#f5a623;--amd:rgba(245,166,35,0.12);
+  --rd:#ff5252;--rdd:rgba(255,82,82,0.12);
+  --bl:#4d9fff;--bld:rgba(77,159,255,0.12);
+  --pu:#9b6fff;--pud:rgba(155,111,255,0.12);
+  --fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;
+  --r:12px;--rs:8px;
+}
+html{font-size:14px}
+body{background:var(--bg);color:var(--t);font-family:var(--fb);min-height:100vh;display:flex;overflow:hidden}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
 
+/* AUTH */
+#auth{position:fixed;inset:0;background:var(--bg);z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px}
+.aw{width:100%;max-width:430px}
+.a-logo{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:30px}
+.a-logo-ico{width:44px;height:44px;border-radius:11px;background:var(--g);display:flex;align-items:center;justify-content:center}
+.a-logo-n{font-family:var(--fh);font-size:26px;font-weight:800;letter-spacing:-0.5px}
+.a-tag{font-size:13px;color:var(--t3);text-align:center;margin-bottom:28px}
+.a-card{background:var(--sf);border:1px solid var(--b2);border-radius:18px;padding:28px}
+.a-tabs{display:flex;gap:0;background:var(--sf2);border-radius:var(--rs);padding:3px;margin-bottom:22px}
+.a-tab{flex:1;padding:8px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--t2);font-family:var(--fb);transition:all .15s;text-align:center}
+.a-tab.on{background:var(--sf);color:var(--t);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.a-panel{display:none}.a-panel.on{display:block}
+.af{margin-bottom:13px}
+.af label{display:block;font-size:12px;font-weight:500;color:var(--t2);margin-bottom:5px}
+.ai{width:100%;padding:10px 12px;border-radius:var(--rs);border:1px solid var(--b2);background:var(--sf2);color:var(--t);font-size:13px;font-family:var(--fb);outline:none;transition:border-color .15s}
+.ai:focus{border-color:var(--g)}.ai::placeholder{color:var(--t3)}
+.a-btn{width:100%;padding:11px;border-radius:var(--rs);background:var(--g);border:none;color:#000;font-size:14px;font-weight:700;font-family:var(--fb);cursor:pointer;transition:all .15s;margin-top:4px}
+.a-btn:hover{background:#00c07e;transform:translateY(-1px)}.a-btn:active{transform:none}
+.a-err{font-size:12px;color:var(--rd);margin-bottom:9px;min-height:16px}
+.a-div{text-align:center;font-size:12px;color:var(--t3);margin:14px 0;position:relative}
+.a-div::before,.a-div::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:var(--b)}
+.a-div::before{left:0}.a-div::after{right:0}
+.acc-list{margin-bottom:14px}
+.acc-item{display:flex;align-items:center;gap:11px;padding:11px 13px;background:var(--sf2);border:1px solid var(--b);border-radius:var(--rs);margin-bottom:7px;cursor:pointer;transition:all .15s}
+.acc-item:hover{border-color:var(--g);background:var(--gd)}
+.acc-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:12px;font-weight:700;flex-shrink:0}
+.acc-info{flex:1;min-width:0}
+.acc-name{font-size:13px;font-weight:500}
+.acc-biz{font-size:11px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ONBOARDING */
+#ob{position:fixed;inset:0;background:var(--bg);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
+#ob.on{display:flex}
+.ob-box{width:100%;max-width:490px;background:var(--sf);border:1px solid var(--b2);border-radius:20px;padding:32px}
+.ob-s{display:none}.ob-s.on{display:block}
+.ob-logo{display:flex;align-items:center;gap:10px;margin-bottom:24px}
+.sn{font-size:11px;color:var(--t3);margin-bottom:14px}
+.st{font-family:var(--fh);font-size:22px;font-weight:800;margin-bottom:7px;letter-spacing:-.4px}
+.ss{font-size:13px;color:var(--t2);margin-bottom:20px;line-height:1.55}
+.oi{width:100%;padding:10px 12px;border-radius:var(--rs);border:1px solid var(--b2);background:var(--sf2);color:var(--t);font-size:13px;font-family:var(--fb);outline:none;transition:border-color .15s;margin-bottom:11px}
+.oi:focus{border-color:var(--g)}.oi::placeholder{color:var(--t3)}
+.pr{display:grid;grid-template-columns:1fr 85px auto;gap:7px;align-items:center;margin-bottom:7px}
+.mi{padding:7px 10px;border-radius:var(--rs);border:1px solid var(--b2);background:var(--sf2);color:var(--t);font-size:13px;font-family:var(--fb);outline:none;width:100%;transition:border-color .15s}
+.mi:focus{border-color:var(--g)}.mi::placeholder{color:var(--t3)}
+.ob-nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px}
+.dots{display:flex;gap:4px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--b2);transition:all .2s}
+.dot.on{background:var(--g);width:16px;border-radius:3px}
+.ob-err{font-size:12px;color:var(--rd);margin-bottom:8px;min-height:16px}
+.sw-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:5px}
+.sw{width:27px;height:27px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s}
+.sw:hover{transform:scale(1.1)}.sw.pk{border-color:#fff;transform:scale(1.15)}
+.rm{width:27px;height:27px;border-radius:50%;border:1px solid var(--b2);background:transparent;cursor:pointer;color:var(--t3);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.rm:hover{border-color:var(--rd);color:var(--rd);background:var(--rdd)}
+
+/* SIDEBAR */
+#sb{width:224px;min-width:224px;height:100vh;background:var(--sf);border-right:1px solid var(--b);display:flex;flex-direction:column;position:sticky;top:0;overflow-y:auto}
+.lw{padding:19px 17px 15px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px}
+.li{width:33px;height:33px;border-radius:8px;background:var(--g);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ln{font-family:var(--fh);font-size:15px;font-weight:700;letter-spacing:-.3px;line-height:1.2}
+.lt{font-size:10px;color:var(--t3)}
+.ns{padding:17px 15px 0;font-size:9.5px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:var(--t3);margin-bottom:5px}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 13px;margin:1px 7px;border-radius:var(--rs);cursor:pointer;font-size:13px;color:var(--t2);transition:all .15s;border:1px solid transparent}
+.ni:hover{color:var(--t);background:var(--sf2)}
+.ni.on{color:var(--g);background:var(--gd);border-color:rgba(0,214,143,.15);font-weight:500}
+.nico{width:15px;height:15px;opacity:.75;flex-shrink:0}
+.ni.on .nico{opacity:1}
+.nbg{margin-left:auto;background:var(--rd);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px}
+.nbg.g{background:var(--g);color:#000}
+.sf2{margin-top:auto;padding:11px;border-top:1px solid var(--b)}
+.uc{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--sf2);border:1px solid var(--b);border-radius:var(--rs);cursor:pointer;transition:border-color .15s}
+.uc:hover{border-color:var(--b2)}
+.uav{width:29px;height:29px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;font-family:var(--fh)}
+.un{font-size:13px;font-weight:500;line-height:1.2}
+.ur{font-size:10px;color:var(--t3)}
+.sob{display:flex;align-items:center;gap:6px;width:100%;margin-top:7px;padding:7px 11px;border-radius:var(--rs);border:1px solid var(--b);background:transparent;color:var(--t3);font-size:12px;font-family:var(--fb);cursor:pointer;transition:all .15s}
+.sob:hover{border-color:var(--rd);color:var(--rd);background:var(--rdd)}
+
+/* MAIN */
+#main{flex:1;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
+.tb{padding:13px 25px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;background:var(--bg);position:sticky;top:0;z-index:50;backdrop-filter:blur(12px)}
+.pgt{font-family:var(--fh);font-size:18px;font-weight:700;letter-spacing:-.3px}
+.tr{display:flex;align-items:center;gap:8px}
+.tc{padding:5px 12px;background:var(--sf2);border:1px solid var(--b);border-radius:20px;font-size:12px;color:var(--t2)}
+
+/* BUTTONS */
+.btn{padding:8px 15px;border-radius:var(--rs);font-size:13px;font-family:var(--fb);cursor:pointer;border:1px solid var(--b2);background:transparent;color:var(--t);transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{border-color:var(--b3);background:var(--sf2)}.btn:active{transform:scale(.98)}
+.btn-p{background:var(--g);border-color:var(--g);color:#000;font-weight:600}
+.btn-p:hover{background:#00c07e;border-color:#00c07e;color:#000}
+.btn-d{background:var(--rdd);border-color:rgba(255,82,82,.3);color:var(--rd)}
+.btn-d:hover{background:rgba(255,82,82,.2)}
+.btn-s{padding:5px 11px;font-size:12px}
+
+/* CONTENT */
+.ct{padding:21px 25px;flex:1}
+.vw{display:none}.vw.on{display:block}
+
+/* STATS */
+.sg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-bottom:19px}
+.sc{background:var(--sf);border:1px solid var(--b);border-radius:var(--r);padding:15px 16px;transition:border-color .15s}
+.sc:hover{border-color:var(--b2)}
+.sct{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.scl{font-size:12px;color:var(--t2)}
+.sci{width:27px;height:27px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px}
+.scv{font-family:var(--fh);font-size:23px;font-weight:700;letter-spacing:-.5px}
+.scsub{font-size:11px;color:var(--t3);margin-top:3px}
+
+/* CARDS */
+.cd{background:var(--sf);border:1px solid var(--b);border-radius:var(--r);padding:18px;margin-bottom:13px}
+.cdh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cdt{font-family:var(--fh);font-size:14px;font-weight:600}
+.cds{font-size:11px;color:var(--t3);margin-top:2px}
+
+/* BADGES */
+.bg{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
+.bg-g{background:var(--gd);color:var(--g);border:1px solid rgba(0,214,143,.2)}
+.bg-a{background:var(--amd);color:var(--am);border:1px solid rgba(245,166,35,.2)}
+.bg-r{background:var(--rdd);color:var(--rd);border:1px solid rgba(255,82,82,.2)}
+.bg-b{background:var(--bld);color:var(--bl);border:1px solid rgba(77,159,255,.2)}
+.bg-gr{background:rgba(255,255,255,.06);color:var(--t2);border:1px solid var(--b)}
+
+/* CUSTOMER GRID */
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.cc{background:var(--sf);border:1px solid var(--b);border-left:3px solid var(--b);border-radius:var(--r);padding:16px;transition:all .15s;position:relative;overflow:hidden}
+.cc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent)}
+.cc:hover{border-color:var(--b2);transform:translateY(-1px)}
+.cc.sg{border-left-color:var(--g)}.cc.sr{border-left-color:var(--rd)}.cc.sa{border-left-color:var(--am)}
+.cav{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:13px;font-weight:700;flex-shrink:0;border:2px solid rgba(255,255,255,.06)}
+.cn{font-size:14px;font-weight:500;font-family:var(--fh);line-height:1.2}
+.ca{font-size:12px;color:var(--t2);margin-top:3px;line-height:1.35}
+.cph{font-size:11px;color:var(--t3);margin-top:2px}
+.cno{font-size:11px;color:var(--t2);background:var(--sf2);border:1px solid var(--b);border-radius:6px;padding:5px 8px;margin-bottom:9px;line-height:1.4}
+.dps{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.dp{padding:3px 8px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid var(--b2);background:transparent;color:var(--t3);font-family:var(--fb);transition:all .12s}
+.dp:hover{border-color:var(--b3);color:var(--t2)}.dp.on{background:var(--gd);border-color:rgba(0,214,143,.3);color:var(--g);font-weight:500}
+.cas{display:flex;gap:5px;border-top:1px solid var(--b);padding-top:10px}
+.ab{flex:1;padding:7px 5px;border-radius:7px;border:1px solid var(--b2);background:transparent;font-size:11px;cursor:pointer;font-family:var(--fb);color:var(--t2);transition:all .12s;text-align:center}
+.ab:hover{background:var(--sf2);border-color:var(--b3);color:var(--t)}
+.ab.dg{background:var(--gd);border-color:rgba(0,214,143,.25);color:var(--g)}.ab.dg:hover{background:var(--gm)}
+.ab.sk{background:var(--rdd);border-color:rgba(255,82,82,.25);color:var(--rd)}.ab.sk:hover{background:rgba(255,82,82,.2)}
+.ab.rs{background:var(--amd);border-color:rgba(245,166,35,.25);color:var(--am)}
+
+/* ROUTE */
+.ri{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--sf2);border:1px solid var(--b);border-radius:var(--rs);margin-bottom:6px;transition:all .15s}
+.ri:hover{border-color:var(--b2)}
+.ri.sg{border-left:3px solid var(--g);opacity:.72}.ri.sr{border-left:3px solid var(--rd);opacity:.62}
+.rn{width:22px;height:22px;border-radius:50%;background:var(--sf);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--t2);flex-shrink:0}
+.rif{flex:1;min-width:0}
+.rnm{font-size:13px;font-weight:500}
+.rad{font-size:11px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rnt{font-size:11px;color:var(--am);margin-top:2px}
+.chk{width:27px;height:27px;border-radius:50%;border:1.5px solid var(--b2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all .15s;color:transparent}
+.chk:hover{border-color:var(--g)}.chk.ck{background:var(--g);border-color:var(--g);color:#000}.chk.sk{background:var(--rd);border-color:var(--rd);color:#fff;font-size:11px}
+.skp{width:27px;height:27px;border-radius:50%;border:1.5px solid var(--b2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;transition:all .15s;color:var(--t3)}
+.skp:hover{border-color:var(--rd);color:var(--rd)}
+
+/* PROGRESS */
+.pw{margin-bottom:14px}
+.pb{height:6px;background:var(--sf2);border-radius:3px;overflow:hidden;margin-bottom:5px}
+.pf{height:100%;border-radius:3px;background:var(--g);transition:width .5s ease}
+.pl{font-size:11px;color:var(--t3)}
+
+/* MODAL */
+.mbk{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:500;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
+.mbk.on{display:flex}
+.md{background:var(--sf);border:1px solid var(--b2);border-radius:16px;padding:25px;width:100%;max-width:530px;margin:auto;position:relative}
+.mdt{font-family:var(--fh);font-size:17px;font-weight:700;margin-bottom:5px}
+.mds{font-size:13px;color:var(--t2);margin-bottom:19px}
+.mdc{position:absolute;top:15px;right:15px;width:27px;height:27px;border-radius:50%;border:1px solid var(--b2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--t2);transition:all .15s}
+.mdc:hover{border-color:var(--b3);color:var(--t)}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg.fl{grid-column:1/-1}
+.fg label{font-size:12px;font-weight:500;color:var(--t2)}
+.fg input,.fg select,.fg textarea{padding:9px 11px;border-radius:var(--rs);border:1px solid var(--b2);background:var(--sf2);color:var(--t);font-size:13px;font-family:var(--fb);outline:none;transition:border-color .15s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--g)}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--t3)}
+.fg select option{background:var(--sf2)}
+.fg textarea{resize:vertical;min-height:62px;line-height:1.5}
+.mf{display:flex;gap:8px;justify-content:flex-end;margin-top:19px;padding-top:15px;border-top:1px solid var(--b)}
+.dpk{display:flex;gap:5px;flex-wrap:wrap}
+.dpb{padding:6px 12px;border-radius:20px;border:1px solid var(--b2);background:transparent;color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;font-family:var(--fb);transition:all .12s}
+.dpb:hover{border-color:var(--b3);color:var(--t)}.dpb.on{background:var(--gd);border-color:rgba(0,214,143,.35);color:var(--g)}
+.em{font-size:12px;color:var(--rd);margin-top:7px;min-height:16px}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-size:10.5px;color:var(--t3);padding:0 10px 8px;border-bottom:1px solid var(--b);text-transform:uppercase;letter-spacing:.8px;font-weight:500}
+.tbl td{padding:10px 10px;border-bottom:1px solid var(--b);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:var(--sf2)}
+
+/* SEARCH */
+.sw2{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.si{flex:1;min-width:180px;padding:9px 12px;border-radius:var(--rs);border:1px solid var(--b2);background:var(--sf2);color:var(--t);font-size:13px;font-family:var(--fb);outline:none;transition:border-color .15s}
+.si:focus{border-color:var(--g)}.si::placeholder{color:var(--t3)}
+.fs{padding:9px 10px;border-radius:var(--rs);border:1px solid var(--b2);background:var(--sf2);color:var(--t);font-size:13px;font-family:var(--fb);cursor:pointer;outline:none}
+.fs option{background:var(--sf)}
+
+/* WEEKLY */
+.wk{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}
+.wkc{background:var(--sf);border:1px solid var(--b);border-radius:var(--r);overflow:hidden}
+.wkh{padding:9px 11px;background:var(--sf2);border-bottom:1px solid var(--b)}
+.wkh.td{background:var(--gd);border-bottom-color:rgba(0,214,143,.15)}
+.wkh.td .whd{color:var(--g)}
+.whd{font-family:var(--fh);font-size:12px;font-weight:600}
+.whc{font-size:10px;color:var(--t3);margin-top:1px}
+.wks{padding:7px 10px;border-bottom:1px solid var(--b);cursor:pointer;transition:background .12s;font-size:11px}
+.wks:last-child{border-bottom:none}.wks:hover{background:var(--sf2)}.wks.sg{opacity:.5}
+.wsn{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wsa{color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.wsd{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:3px;vertical-align:middle}
+
+/* PLAN SETTINGS */
+.pc{background:var(--sf2);border:1px solid var(--b);border-radius:var(--r);padding:13px 16px;display:flex;align-items:center;gap:12px;margin-bottom:8px;transition:border-color .15s}
+.pc:hover{border-color:var(--b2)}
+.pd{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+
+/* ACTIVITY */
+.ai2{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid var(--b)}
+.ai2:last-child{border-bottom:none}
+.adot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.atxt{flex:1;font-size:12px;line-height:1.4}
+.atm{font-size:10px;color:var(--t3);white-space:nowrap}
+
+/* LAYOUT */
+.two{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:13px}
+.emp{text-align:center;padding:44px 20px;color:var(--t3);font-size:13px}
+.emp-i{font-size:32px;margin-bottom:10px;opacity:.4}
+.emp-t{font-size:14px;font-weight:500;color:var(--t2);margin-bottom:5px}
+
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.fi{animation:fi .2s ease forwards}
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="auth">
+  <div class="aw">
+    <div class="a-logo">
+      <div class="a-logo-ico">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/>
+        </svg>
+      </div>
+      <div class="a-logo-n">RouteFlow</div>
+    </div>
+    <div class="a-tag">Route & Customer Management</div>
+    <div class="a-card">
+      <div class="a-tabs">
+        <div class="a-tab on" id="t-li" onclick="atab('li')">Sign in</div>
+        <div class="a-tab" id="t-rg" onclick="atab('rg')">Create account</div>
+      </div>
+
+      <!-- LOGIN -->
+      <div class="a-panel on" id="p-li">
+        <div id="saved-wrap">
+          <div style="font-size:12px;color:var(--t2);margin-bottom:9px;font-weight:500">Saved accounts on this device</div>
+          <div class="acc-list" id="acc-list"></div>
+          <div class="a-div">or sign in manually</div>
+        </div>
+        <div class="af"><label>Username</label><input class="ai" id="l-u" placeholder="your_username" autocomplete="username"></div>
+        <div class="af"><label>Password</label><input class="ai" id="l-p" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+        <div class="a-err" id="l-err"></div>
+        <button class="a-btn" onclick="doLogin()">Sign in →</button>
+      </div>
+
+      <!-- REGISTER -->
+      <div class="a-panel" id="p-rg">
+        <div class="af"><label>Your full name</label><input class="ai" id="r-n" placeholder="Alex Johnson"></div>
+        <div class="af"><label>Username <span style="color:var(--t3);font-size:11px">(no spaces)</span></label><input class="ai" id="r-u" placeholder="alex_johnson" autocomplete="username"></div>
+        <div class="af"><label>Password</label><input class="ai" id="r-p" type="password" placeholder="At least 6 characters" autocomplete="new-password"></div>
+        <div class="af"><label>Confirm password</label><input class="ai" id="r-p2" type="password" placeholder="Repeat password" autocomplete="new-password"></div>
+        <div class="a-err" id="r-err"></div>
+        <button class="a-btn" onclick="doRegister()">Create account →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ONBOARDING -->
+<div id="ob">
+  <div class="ob-box">
+    <div class="ob-logo">
+      <div style="width:30px;height:30px;border-radius:8px;background:var(--g);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+      </div>
+      <div style="font-family:var(--fh);font-size:15px;font-weight:700">RouteFlow</div>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="ob-s on" id="ob1">
+      <div class="sn">Step 1 of 3 — Business Info</div>
+      <div class="st">Set up your business.</div>
+      <div class="ss">Personalize the app for your operation.</div>
+      <label style="font-size:12px;font-weight:500;color:var(--t2);display:block;margin-bottom:5px">Business name *</label>
+      <input class="oi" id="ob-biz" placeholder="Johnson Waste Services">
+      <label style="font-size:12px;font-weight:500;color:var(--t2);display:block;margin-bottom:5px">Business phone (optional)</label>
+      <input class="oi" id="ob-ph" placeholder="(360) 555-0100">
+      <label style="font-size:12px;font-weight:500;color:var(--t2);display:block;margin-bottom:6px">Pick your accent color</label>
+      <div class="sw-row" id="ob-sw"></div>
+      <div class="ob-err" id="ob-e1"></div>
+      <div class="ob-nav">
+        <div class="dots"><div class="dot on"></div><div class="dot"></div><div class="dot"></div></div>
+        <button class="btn btn-p" onclick="ogoto(2)">Next →</button>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="ob-s" id="ob2">
+      <div class="sn">Step 2 of 3 — Service Plans</div>
+      <div class="st">Build your plans.</div>
+      <div class="ss">Add every service plan you sell. Edit anytime later.</div>
+      <div id="ob-plans"></div>
+      <button class="btn btn-s" onclick="obAddPlan()" style="margin-bottom:12px">+ Add plan</button>
+      <div class="ob-err" id="ob-e2"></div>
+      <div class="ob-nav">
+        <div class="dots"><div class="dot"></div><div class="dot on"></div><div class="dot"></div></div>
+        <div style="display:flex;gap:7px"><button class="btn" onclick="ogoto(1)">← Back</button><button class="btn btn-p" onclick="ogoto(3)">Next →</button></div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="ob-s" id="ob3">
+      <div class="sn">Step 3 of 3 — Review</div>
+      <div class="st">You're ready.</div>
+      <div class="ss">Everything is configured. Launch your workspace.</div>
+      <div id="ob-sum" style="background:var(--sf2);border:1px solid var(--b);border-radius:var(--r);padding:14px 16px;font-size:13px;line-height:1.9;margin-bottom:6px"></div>
+      <div class="ob-err" id="ob-e3"></div>
+      <div class="ob-nav">
+        <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot on"></div></div>
+        <div style="display:flex;gap:7px"><button class="btn" onclick="ogoto(2)">← Back</button><button class="btn btn-p" onclick="obLaunch()">Launch →</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<nav id="sb" style="display:none">
+  <div class="lw">
+    <div class="li" id="sb-ico">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/>
+      </svg>
+    </div>
+    <div><div class="ln" id="sb-biz">RouteFlow</div><div class="lt">Route Management</div></div>
+  </div>
+  <div>
+    <div class="ns">Overview</div>
+    <div class="ni on" onclick="gv('dashboard',this)"><svg class="nico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</div>
+    <div class="ns">Customers</div>
+    <div class="ni" onclick="gv('customers',this)"><svg class="nico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>All Customers<span class="nbg g" id="nb-t">0</span></div>
+    <div class="ns">Routes</div>
+    <div class="ni" onclick="gv('route',this)"><svg class="nico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Today's Route<span class="nbg" id="nb-p" style="display:none">0</span></div>
+    <div class="ni" onclick="gv('weekly',this)"><svg class="nico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Weekly Schedule</div>
+    <div class="ns">Business</div>
+    <div class="ni" onclick="gv('billing',this)"><svg class="nico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Plans & Revenue</div>
+    <div class="ni" onclick="gv('settings',this)"><svg class="nico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</div>
+  </div>
+  <div class="sf2">
+    <div class="uc"><div class="uav" id="sb-av">AJ</div><div><div class="un" id="sb-own">Owner</div><div class="ur" id="sb-un">@user</div></div></div>
+    <button class="sob" onclick="signOut()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign out
+    </button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div id="main" style="display:none">
+  <div class="tb">
+    <div class="pgt" id="pg-t">Dashboard</div>
+    <div class="tr">
+      <div class="tc" id="tc"></div>
+      <button class="btn btn-p" onclick="openAdd()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Add Customer
+      </button>
+    </div>
+  </div>
+  <div class="ct">
+
+    <!-- DASHBOARD -->
+    <div class="vw on" id="v-dashboard">
+      <div class="sg" id="d-stats"></div>
+      <div class="two">
+        <div class="cd">
+          <div class="cdh"><div><div class="cdt">Today's stops</div><div class="cds" id="d-dsub"></div></div><span class="bg bg-g" id="d-dbg"></span></div>
+          <div class="pw"><div class="pb"><div class="pf" id="d-pf" style="width:0%"></div></div><div class="pl" id="d-pl"></div></div>
+          <div id="d-today"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:13px">
+          <div class="cd" style="margin-bottom:0"><div class="cdh"><div class="cdt">Week at a glance</div></div><div id="d-week"></div></div>
+          <div class="cd" style="margin-bottom:0"><div class="cdh"><div class="cdt">Recent activity</div></div><div id="d-act"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOMERS -->
+    <div class="vw" id="v-customers">
+      <div class="sw2">
+        <input class="si" id="cs-s" placeholder="Search name, address, phone, plan…" oninput="rCusts()">
+        <select class="fs" id="cs-d" onchange="rCusts()"><option value="">All days</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select>
+        <select class="fs" id="cs-p" onchange="rCusts()"><option value="">All plans</option></select>
+        <select class="fs" id="cs-st" onchange="rCusts()"><option value="">All statuses</option><option>Pending</option><option>Completed</option><option>Skipped</option></select>
+      </div>
+      <div class="cg" id="cg"></div>
+      <div class="emp" id="ce" style="display:none"><div class="emp-i">👤</div><div class="emp-t">No customers found</div><div>Try different filters or add one.</div></div>
+    </div>
+
+    <!-- ROUTE -->
+    <div class="vw" id="v-route">
+      <div class="sg" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+        <div class="sc"><div class="sct"><span class="scl">Stops today</span><div class="sci" style="background:var(--bld)">🗺️</div></div><div class="scv" id="rt-tot">0</div></div>
+        <div class="sc"><div class="sct"><span class="scl">Completed</span><div class="sci" style="background:var(--gd)">✓</div></div><div class="scv" style="color:var(--g)" id="rt-dn">0</div></div>
+        <div class="sc"><div class="sct"><span class="scl">Remaining</span><div class="sci" style="background:var(--amd)">⏳</div></div><div class="scv" style="color:var(--am)" id="rt-lf">0</div></div>
+      </div>
+      <div class="cd">
+        <div class="cdh">
+          <div><div class="cdt" id="rt-ti">Today's route</div><div class="cds" id="rt-sb"></div></div>
+          <div style="display:flex;gap:7px"><button class="btn btn-s" onclick="markAll()">Mark all done</button><button class="btn btn-s" onclick="resetR()">Reset</button></div>
+        </div>
+        <div class="pw"><div class="pb"><div class="pf" id="rt-pf" style="width:0%"></div></div><div class="pl" id="rt-pl"></div></div>
+        <div id="r-list"></div>
+      </div>
+    </div>
+
+    <!-- WEEKLY -->
+    <div class="vw" id="v-weekly">
+      <div class="cdh" style="margin-bottom:13px"><div class="cdt" style="font-size:16px">Weekly Schedule</div><button class="btn btn-s" onclick="rWeek()">↻ Refresh</button></div>
+      <div class="wk" id="wk-grid"></div>
+    </div>
+
+    <!-- BILLING -->
+    <div class="vw" id="v-billing">
+      <div class="sg" id="b-stats"></div>
+      <div class="two">
+        <div class="cd"><div class="cdh"><div class="cdt">Customer billing</div></div><div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Customer</th><th>Address</th><th>Plan</th><th>Monthly</th><th>Pickup days</th><th>Status</th></tr></thead><tbody id="b-body"></tbody></table></div></div>
+        <div class="cd"><div class="cdh"><div class="cdt">Revenue by plan</div></div><div id="b-plans"></div></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="vw" id="v-settings">
+      <div class="two">
+        <div>
+          <div class="cd">
+            <div class="cdh"><div class="cdt">Business info</div><button class="btn btn-s btn-p" onclick="saveSet()">Save</button></div>
+            <div class="fg2">
+              <div class="fg"><label>Owner name</label><input id="s-own"></div>
+              <div class="fg"><label>Business name</label><input id="s-biz"></div>
+              <div class="fg fl"><label>Business phone</label><input id="s-ph"></div>
+              <div class="fg fl"><label>Accent color</label><div class="sw-row" id="s-sw" style="margin-top:5px"></div></div>
+              <div class="fg fl"><label>New password <span style="color:var(--t3);font-size:11px">(leave blank to keep)</span></label><input id="s-pw1" type="password" placeholder="New password"></div>
+              <div class="fg fl"><label>Confirm new password</label><input id="s-pw2" type="password" placeholder="Repeat new password"></div>
+            </div>
+            <div class="em" id="s-msg"></div>
+          </div>
+          <div class="cd">
+            <div class="cdh"><div><div class="cdt">Service plans</div><div class="cds">Your billable tiers</div></div><button class="btn btn-s btn-p" onclick="sAddPlan()">+ Plan</button></div>
+            <div id="s-plans"></div>
+            <button class="btn btn-p" style="margin-top:10px" onclick="savePlans()">Save plans</button>
+          </div>
+        </div>
+        <div>
+          <div class="cd">
+            <div class="cdh"><div class="cdt">Account info</div></div>
+            <div style="font-size:13px;line-height:2.1;color:var(--t2)">
+              <div><span style="color:var(--t3)">Username</span> &nbsp; <span id="s-un"></span></div>
+              <div><span style="color:var(--t3)">Customers</span> &nbsp; <span id="s-cc"></span></div>
+              <div><span style="color:var(--t3)">Plans</span> &nbsp; <span id="s-pc"></span></div>
+            </div>
+          </div>
+          <div class="cd">
+            <div class="cdh"><div class="cdt">Data</div></div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button class="btn" onclick="expData()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export my data (JSON)</button>
+              <button class="btn" onclick="document.getElementById('imp').click()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Import data (JSON)</button>
+              <input type="file" id="imp" accept=".json" style="display:none" onchange="impData(event)">
+              <button class="btn btn-d" onclick="delAcct()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>Delete my account</button>
+            </div>
+          </div>
+          <div class="cd">
+            <div class="cdh"><div class="cdt">All accounts on this device</div></div>
+            <div id="s-accs"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADD/EDIT CUSTOMER MODAL -->
+<div class="mbk" id="cm" onclick="cout(event,'cm')">
+  <div class="md">
+    <button class="mdc" onclick="cm2('cm')">✕</button>
+    <div class="mdt" id="cm-t">Add new customer</div>
+    <div class="mds" id="cm-s">Fill in the customer's details.</div>
+    <div class="fg2">
+      <div class="fg"><label>First name *</label><input id="m-fi" placeholder="John"></div>
+      <div class="fg"><label>Last name *</label><input id="m-la" placeholder="Smith"></div>
+      <div class="fg fl"><label>Street address *</label><input id="m-ad" placeholder="123 Maple Street"></div>
+      <div class="fg"><label>City *</label><input id="m-ci" placeholder="Silverdale"></div>
+      <div class="fg"><label>State</label><input id="m-st" placeholder="WA"></div>
+      <div class="fg"><label>ZIP</label><input id="m-zi" placeholder="98383"></div>
+      <div class="fg"><label>Phone *</label><input id="m-ph" placeholder="(360) 555-0100" type="tel"></div>
+      <div class="fg"><label>Email</label><input id="m-em" placeholder="john@email.com" type="email"></div>
+      <div class="fg fl"><label>Service plan *</label><select id="m-pl"></select></div>
+      <div class="fg fl"><label>Pickup day(s) *</label>
+        <div class="dpk" id="m-days">
+          <button class="dpb" onclick="tday(this,'Monday')">Mon</button>
+          <button class="dpb" onclick="tday(this,'Tuesday')">Tue</button>
+          <button class="dpb" onclick="tday(this,'Wednesday')">Wed</button>
+          <button class="dpb" onclick="tday(this,'Thursday')">Thu</button>
+          <button class="dpb" onclick="tday(this,'Friday')">Fri</button>
+          <button class="dpb" onclick="tday(this,'Saturday')">Sat</button>
+        </div>
+      </div>
+      <div class="fg fl"><label>Notes / instructions</label><textarea id="m-no" placeholder="Gate code, bin location, special instructions…"></textarea></div>
+    </div>
+    <div class="em" id="cm-e"></div>
+    <div class="mf"><button class="btn" onclick="cm2('cm')">Cancel</button><button class="btn btn-p" onclick="saveCust()">Save customer</button></div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM -->
+<div class="mbk" id="dm" onclick="cout(event,'dm')">
+  <div class="md" style="max-width:350px">
+    <div class="mdt">Delete customer?</div>
+    <div class="mds" id="dm-s">This cannot be undone.</div>
+    <div class="mf"><button class="btn" onclick="cm2('dm')">Cancel</button><button class="btn btn-d" onclick="doDel()">Delete</button></div>
+  </div>
+</div>
+
+<script>
+// ═══ STORAGE ════════════════════════════════════════
+const KA='rf_accs_v1', KS='rf_sess_v1';
+const KD=u=>`rf_data_${u}_v1`;
+const gAccs=()=>{try{return JSON.parse(localStorage.getItem(KA))||{}}catch{return{}}};
+const sAccs=o=>localStorage.setItem(KA,JSON.stringify(o));
+const gSess=()=>localStorage.getItem(KS)||null;
+const sSess=u=>localStorage.setItem(KS,u);
+const cSess=()=>localStorage.removeItem(KS);
+const gData=u=>{try{return JSON.parse(localStorage.getItem(KD(u)))||null}catch{return null}};
+const sData=(u,d)=>localStorage.setItem(KD(u),JSON.stringify(d));
+const dData=u=>localStorage.removeItem(KD(u));
+
+function hashPw(pw){let h=0;for(let i=0;i<pw.length;i++)h=(Math.imul(31,h)+pw.charCodeAt(i))|0;return'h'+Math.abs(h).toString(36)+pw.length.toString(36);}
+
+// ═══ STATE ════════════════════════════════════════
+let CU=null,D=null,editId=null,delId=null;
+const COLS=['#00d68f','#4d9fff','#9b6fff','#f5a623','#ff5252','#ff6bcb','#00cfff','#e2e2e2'];
+const PC=['#00d68f','#4d9fff','#9b6fff','#f5a623','#ff5252','#00cfff'];
+const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const AVB=['#00d68f','#4d9fff','#9b6fff','#f5a623','#ff5252','#ff6bcb'];
+let obAcc='#00d68f',obStep=1;
+
+// ═══ AUTH ═════════════════════════════════════════
+function atab(t){
+  ['li','rg'].forEach(x=>{
+    document.getElementById('t-'+x).classList.toggle('on',x===t);
+    document.getElementById('p-'+x).classList.toggle('on',x===t);
+  });
+}
+function rSaved(){
+  const a=gAccs(),ks=Object.keys(a);
+  const w=document.getElementById('saved-wrap');
+  if(!ks.length){w.style.display='none';return;}
+  w.style.display='block';
+  document.getElementById('acc-list').innerHTML=ks.map(u=>{
+    const d=gData(u),c=d?d.accentColor:'#00d68f';
+    const ini=(a[u].name||u).split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    return`<div class="acc-item" onclick="qLogin('${u}')">
+      <div class="acc-av" style="background:${c}22;color:${c}">${ini}</div>
+      <div class="acc-info"><div class="acc-name">${a[u].name||u}</div><div class="acc-biz">${d?d.bizName:''}${d?' · ':''}<span style="color:var(--t3)">@${u}</span></div></div>
+      <div style="color:var(--t3);font-size:16px">›</div>
+    </div>`;
+  }).join('');
+}
+function qLogin(u){document.getElementById('l-u').value=u;document.getElementById('l-p').value='';document.getElementById('l-p').focus();document.getElementById('l-err').textContent='Enter password for @'+u;document.getElementById('l-err').style.color='var(--t2)';}
+function doLogin(){
+  const u=document.getElementById('l-u').value.trim().toLowerCase();
+  const p=document.getElementById('l-p').value;
+  const e=document.getElementById('l-err');
+  if(!u||!p){e.style.color='var(--rd)';e.textContent='Enter username and password.';return;}
+  const a=gAccs();
+  if(!a[u]){e.style.color='var(--rd)';e.textContent='Account not found.';return;}
+  if(a[u].passwordHash!==hashPw(p)){e.style.color='var(--rd)';e.textContent='Wrong password.';return;}
+  e.textContent='';sSess(u);bootUser(u);
+}
+function doRegister(){
+  const n=document.getElementById('r-n').value.trim();
+  const u=document.getElementById('r-u').value.trim().toLowerCase().replace(/\s+/g,'_');
+  const p=document.getElementById('r-p').value;
+  const p2=document.getElementById('r-p2').value;
+  const e=document.getElementById('r-err');
+  if(!n){e.textContent='Enter your name.';return;}
+  if(!u||u.length<3||!/^[a-z0-9_]+$/.test(u)){e.textContent='Username: 3+ chars, letters/numbers/underscores only.';return;}
+  if(!p||p.length<6){e.textContent='Password: at least 6 characters.';return;}
+  if(p!==p2){e.textContent='Passwords do not match.';return;}
+  const a=gAccs();
+  if(a[u]){e.textContent='Username already taken.';return;}
+  e.textContent='';
+  a[u]={name:n,passwordHash:hashPw(p)};
+  sAccs(a);sSess(u);CU=u;
+  startOB(n);
+}
+function bootUser(u){
+  CU=u;D=gData(u);
+  if(!D||!D.setupDone){const a=gAccs();startOB(a[u]?.name||u);}
+  else launch();
+}
+
+// ═══ ONBOARDING ═══════════════════════════════════
+function startOB(name){
+  document.getElementById('auth').style.display='none';
+  document.getElementById('ob').classList.add('on');
+  obAcc='#00d68f';obStep=1;
+  document.getElementById('ob-sw').innerHTML=COLS.map(c=>`<div class="sw ${c===obAcc?'pk':''}" data-c="${c}" style="background:${c}" onclick="opk(this)"></div>`).join('');
+  document.getElementById('ob-plans').innerHTML='';
+  obAddPlan('Basic',25,'Weekly pickup');
+  obAddPlan('Standard',40,'Weekly + recycling');
+  obAddPlan('Premium',65,'2x weekly + recycling + yard waste');
+  document.querySelectorAll('.ob-s').forEach(s=>s.classList.remove('on'));
+  document.getElementById('ob1').classList.add('on');
+  obStep=1;
+}
+function opk(el){document.querySelectorAll('#ob-sw .sw').forEach(s=>s.classList.remove('pk'));el.classList.add('pk');obAcc=el.dataset.c;}
+let obc=0;
+function obAddPlan(n='',p='',d=''){
+  const w=document.getElementById('ob-plans');
+  const i=obc++;const div=document.createElement('div');div.setAttribute('data-pi',i);
+  div.style.cssText='margin-bottom:8px';
+  div.innerHTML=`<div class="pr"><input class="mi pn" placeholder="Plan name" value="${n}"><input class="mi pp" type="number" placeholder="$/mo" min="0" value="${p}"><button class="rm" onclick="this.closest('[data-pi]').remove()">×</button></div><input class="mi pd" placeholder="Description (optional)" value="${d}" style="margin-bottom:4px">`;
+  w.appendChild(div);
+}
+function ogoto(n){
+  if(n===2){const biz=document.getElementById('ob-biz').value.trim();if(!biz){document.getElementById('ob-e1').textContent='Enter your business name.';return;}document.getElementById('ob-e1').textContent='';}
+  if(n===3){const pl=colPlans();if(!pl)return;const a=gAccs();document.getElementById('ob-sum').innerHTML=`<b>${a[CU]?.name||CU}</b><br>${document.getElementById('ob-biz').value.trim()}<br><br><b>${pl.length} plan(s):</b><br>`+pl.map(p=>`${p.name} — $${p.price}/mo${p.desc?' · '+p.desc:''}`).join('<br>');document.getElementById('ob-e3').textContent='';}
+  document.getElementById('ob'+obStep).classList.remove('on');
+  obStep=n;
+  document.getElementById('ob'+obStep).classList.add('on');
+}
+function colPlans(){
+  const items=document.querySelectorAll('#ob-plans [data-pi]');
+  const pl=[];let ok=true;
+  items.forEach((item,i)=>{
+    const n=item.querySelector('.pn').value.trim();
+    const p=parseFloat(item.querySelector('.pp').value);
+    const d=item.querySelector('.pd').value.trim();
+    if(!n||isNaN(p)||p<0)ok=false;
+    else pl.push({name:n,price:p,desc:d,color:PC[i%PC.length]});
+  });
+  if(!ok||!pl.length){document.getElementById('ob-e2').textContent='Add at least one plan with a name and price.';return null;}
+  document.getElementById('ob-e2').textContent='';return pl;
+}
+function obLaunch(){
+  const pl=colPlans();if(!pl){ogoto(2);return;}
+  const a=gAccs();
+  D={setupDone:true,owner:a[CU]?.name||CU,bizName:document.getElementById('ob-biz').value.trim(),bizPhone:document.getElementById('ob-ph').value.trim(),accentColor:obAcc,plans:pl,customers:[],activity:[],nextId:1};
+  sData(CU,D);
+  document.getElementById('ob').classList.remove('on');
+  launch();
+}
+
+// ═══ LAUNCH ════════════════════════════════════════
+function hexRgb(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)].join(',');}
+function isLt(h){const[r,g,b]=[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];return(r*.299+g*.587+b*.114)>150;}
+function setAcc(c){const s=document.documentElement.style;s.setProperty('--g',c);s.setProperty('--gd',`rgba(${hexRgb(c)},.12)`);s.setProperty('--gm',`rgba(${hexRgb(c)},.25)`);const ico=document.getElementById('sb-ico');if(ico)ico.style.background=c;}
+function launch(){
+  if(!D)return;
+  document.getElementById('auth').style.display='none';
+  document.getElementById('ob').classList.remove('on');
+  document.getElementById('sb').style.display='flex';
+  document.getElementById('main').style.display='flex';
+  setAcc(D.accentColor||'#00d68f');
+  document.getElementById('sb-biz').textContent=D.bizName||'RouteFlow';
+  const ini=(D.owner||CU).split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const av=document.getElementById('sb-av');
+  av.textContent=ini;av.style.background=D.accentColor||'#00d68f';av.style.color=isLt(D.accentColor||'#00d68f')?'#000':'#fff';
+  document.getElementById('sb-own').textContent=D.owner||CU;
+  document.getElementById('sb-un').textContent='@'+CU;
+  document.getElementById('tc').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  ppf();badges();rDash();rCusts();
+}
+function signOut(){
+  cSess();CU=null;D=null;
+  document.getElementById('sb').style.display='none';
+  document.getElementById('main').style.display='none';
+  document.getElementById('auth').style.display='flex';
+  rSaved();
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  document.querySelector('.ni').classList.add('on');
+  document.querySelectorAll('.vw').forEach(v=>v.classList.remove('on'));
+  document.getElementById('v-dashboard').classList.add('on');
+  document.getElementById('pg-t').textContent='Dashboard';
+}
+
+// ═══ NAV ══════════════════════════════════════════
+const VT={dashboard:'Dashboard',customers:'Customers',route:"Today's Route",weekly:'Weekly Schedule',billing:'Plans & Revenue',settings:'Settings'};
+function gv(id,el){
+  document.querySelectorAll('.vw').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  document.getElementById('v-'+id).classList.add('on');
+  el.classList.add('on');
+  document.getElementById('pg-t').textContent=VT[id]||id;
+  if(id==='dashboard')rDash();if(id==='customers')rCusts();
+  if(id==='route')rRoute();if(id==='weekly')rWeek();
+  if(id==='billing')rBill();if(id==='settings')lSet();
+}
+
+// ═══ HELPERS ══════════════════════════════════════
+function tday(){return['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];}
+function avc(c){return AVB[c.id%AVB.length];}
+function avh(c,sz=36){const col=avc(c);return`<div class="cav" style="width:${sz}px;height:${sz}px;background:${col}22;color:${col};font-size:${sz>30?13:11}px">${(c.first[0]||'')+(c.last[0]||'')}</div>`;}
+function sbg(s){if(s==='completed')return'<span class="bg bg-g">Completed</span>';if(s==='skipped')return'<span class="bg bg-r">Skipped</span>';return'<span class="bg bg-a">Pending</span>';}
+function pp(n){return(D.plans.find(p=>p.name===n)||{}).price||0;}
+function pc2(n){return(D.plans.find(p=>p.name===n)||{}).color||'#888';}
+function ppf(){document.getElementById('cs-p').innerHTML='<option value="">All plans</option>'+D.plans.map(p=>`<option>${p.name}</option>`).join('');}
+function badges(){
+  document.getElementById('nb-t').textContent=D.customers.length;
+  const tn=tday(),pnd=D.customers.filter(c=>c.days.includes(tn)&&c.status!=='completed').length;
+  const pb=document.getElementById('nb-p');pb.textContent=pnd;pb.style.display=pnd>0?'inline-block':'none';
+}
+function addAct(txt,col){const t=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});D.activity.unshift({time:t,text:txt,color:col});if(D.activity.length>40)D.activity.pop();sData(CU,D);}
+
+// ═══ DASHBOARD ═════════════════════════════════════
+function rDash(){
+  const tn=tday(),tl=D.customers.filter(c=>c.days.includes(tn)),dn=tl.filter(c=>c.status==='completed').length;
+  const rev=D.customers.reduce((a,c)=>a+pp(c.plan),0);
+  document.getElementById('d-stats').innerHTML=`
+    <div class="sc"><div class="sct"><span class="scl">Total customers</span><div class="sci" style="background:var(--bld)">👤</div></div><div class="scv">${D.customers.length}</div><div class="scsub">Active accounts</div></div>
+    <div class="sc"><div class="sct"><span class="scl">Today completed</span><div class="sci" style="background:var(--gd)">✓</div></div><div class="scv" style="color:var(--g)">${dn}/${tl.length}</div><div class="scsub">${tn}</div></div>
+    <div class="sc"><div class="sct"><span class="scl">Monthly revenue</span><div class="sci" style="background:var(--amd)">💰</div></div><div class="scv">$${rev.toLocaleString()}</div><div class="scsub">All plans</div></div>
+    <div class="sc"><div class="sct"><span class="scl">Plans offered</span><div class="sci" style="background:var(--pud)">📋</div></div><div class="scv">${D.plans.length}</div><div class="scsub">Service tiers</div></div>`;
+  document.getElementById('d-dsub').textContent=`${tn} · ${tl.length} scheduled`;
+  document.getElementById('d-dbg').textContent=`${dn}/${tl.length} done`;
+  const pct=tl.length?Math.round((dn/tl.length)*100):0;
+  document.getElementById('d-pf').style.width=pct+'%';
+  document.getElementById('d-pl').textContent=`${dn} of ${tl.length} completed · ${pct}%`;
+  document.getElementById('d-today').innerHTML=tl.length===0
+    ?`<div class="emp"><div class="emp-i">🎉</div><div class="emp-t">No stops today</div><div>No customers on ${tn}.</div></div>`
+    :tl.map(c=>`<div class="ri ${c.status==='completed'?'sg':c.status==='skipped'?'sr':''}" style="margin-bottom:5px">
+        ${avh(c,28)}<div class="rif"><div class="rnm">${c.first} ${c.last}</div><div class="rad">${c.addr}${c.city?', '+c.city:''}</div></div>
+        ${sbg(c.status)}<button class="chk ${c.status==='completed'?'ck':''}" onclick="qt(${c.id},'dashboard')" title="Done">✓</button>
+      </div>`).join('');
+  document.getElementById('d-week').innerHTML=DAYS.map(d=>{const cnt=D.customers.filter(c=>c.days.includes(d)).length,isT=d===tn;return`<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--b)"><span style="font-size:12px;color:${isT?'var(--g)':'var(--t2)'};font-weight:${isT?500:400}">${d.slice(0,3)}</span><div style="display:flex;align-items:center;gap:7px"><div style="height:5px;width:${Math.max(cnt*9,2)}px;max-width:70px;background:var(--g);border-radius:3px;opacity:${cnt?1:.15}"></div><span style="font-size:12px;font-weight:500;color:${isT?'var(--g)':'var(--t)'}">${cnt}</span></div></div>`;}).join('');
+  document.getElementById('d-act').innerHTML=D.activity.slice(0,7).map(a=>`<div class="ai2"><div class="adot" style="background:${a.color}"></div><div class="atxt">${a.text}</div><div class="atm">${a.time}</div></div>`).join('')||'<div style="font-size:12px;color:var(--t3);padding:8px 0">No activity yet.</div>';
+}
+
+// ═══ CUSTOMERS ═════════════════════════════════════
+function rCusts(){
+  const s=(document.getElementById('cs-s').value||'').toLowerCase(),dF=document.getElementById('cs-d').value,pF=document.getElementById('cs-p').value,stF=document.getElementById('cs-st').value;
+  const list=D.customers.filter(c=>{
+    if(s&&!`${c.first} ${c.last} ${c.addr} ${c.city} ${c.phone} ${c.plan}`.toLowerCase().includes(s))return false;
+    if(dF&&!c.days.includes(dF))return false;
+    if(pF&&c.plan!==pF)return false;
+    if(stF&&c.status.toLowerCase()!==stF.toLowerCase())return false;
+    return true;
+  });
+  const emp=document.getElementById('ce'),grid=document.getElementById('cg');
+  if(!list.length){emp.style.display='block';grid.innerHTML='';return;}
+  emp.style.display='none';
+  grid.innerHTML=list.map(c=>{const pcol=pc2(c.plan),prce=pp(c.plan);return`<div class="cc ${c.status==='completed'?'sg':c.status==='skipped'?'sr':'sa'} fi">
+    <div style="display:flex;gap:10px;margin-bottom:10px">
+      ${avh(c)}
+      <div style="flex:1;min-width:0"><div class="cn">${c.first} ${c.last}</div>
+        <div class="ca">📍 ${c.addr}${c.city?', '+c.city:''}${c.state?' '+c.state:''} ${c.zip||''}</div>
+        ${c.phone?`<div class="cph">📞 ${c.phone}</div>`:''}
+        ${c.email?`<div class="cph">✉ ${c.email}</div>`:''}
+      </div>
+      <div style="flex-shrink:0">${sbg(c.status)}</div>
+    </div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px">
+      <span class="bg" style="background:${pcol}22;color:${pcol};border-color:${pcol}44">${c.plan}</span>
+      <span class="bg bg-gr">$${prce}/mo</span>
+    </div>
+    <div style="font-size:11px;color:var(--t3);margin-bottom:5px">Pickup day(s)</div>
+    <div class="dps">${DAYS.map(d=>`<button class="dp ${c.days.includes(d)?'on':''}" onclick="tcd(${c.id},'${d}')">${d.slice(0,3)}</button>`).join('')}</div>
+    ${c.notes?`<div class="cno">📝 ${c.notes}</div>`:''}
+    <div class="cas">
+      <button class="ab dg" onclick="ss(${c.id},'completed')">✓ Done</button>
+      <button class="ab sk" onclick="ss(${c.id},'skipped')">✕ Skip</button>
+      <button class="ab rs" onclick="ss(${c.id},'pending')">↺ Reset</button>
+      <button class="ab"    onclick="openEdit(${c.id})">✎ Edit</button>
+      <button class="ab"    onclick="openDel(${c.id})" style="flex:0;padding:7px 9px;color:var(--rd)">🗑</button>
+    </div>
+  </div>`;}).join('');
+}
+function ss(id,st){const c=D.customers.find(c=>c.id===id);if(!c)return;c.status=st;addAct(`${c.first} ${c.last} — ${st==='completed'?'marked complete':st==='skipped'?'marked skipped':'reset'}`,st==='completed'?'var(--g)':st==='skipped'?'var(--rd)':'var(--am)');rCusts();badges();}
+function qt(id,from){const c=D.customers.find(c=>c.id===id);if(!c)return;c.status=c.status==='completed'?'pending':'completed';addAct(`${c.first} ${c.last} — ${c.status==='completed'?'marked complete':'reset'}`,c.status==='completed'?'var(--g)':'var(--am)');sData(CU,D);badges();if(from==='dashboard')rDash();if(from==='route')rRoute();if(from==='weekly')rWeek();}
+function tcd(id,day){const c=D.customers.find(c=>c.id===id);if(!c)return;if(c.days.includes(day))c.days=c.days.filter(d=>d!==day);else c.days.push(day);addAct(`${c.first} ${c.last} — updated pickup days`,'var(--bl)');sData(CU,D);rCusts();badges();}
+
+// ═══ ROUTE ═════════════════════════════════════════
+function rRoute(){
+  const tn=tday(),list=D.customers.filter(c=>c.days.includes(tn));
+  const dn=list.filter(c=>c.status==='completed').length,sk=list.filter(c=>c.status==='skipped').length;
+  document.getElementById('rt-tot').textContent=list.length;
+  document.getElementById('rt-dn').textContent=dn;
+  document.getElementById('rt-lf').textContent=list.length-dn-sk;
+  document.getElementById('rt-ti').textContent=`${tn}'s route`;
+  document.getElementById('rt-sb').textContent=`${list.length} stops · ${dn} done · ${sk} skipped`;
+  const pct=list.length?Math.round((dn/list.length)*100):0;
+  document.getElementById('rt-pf').style.width=pct+'%';
+  document.getElementById('rt-pl').textContent=`${dn} of ${list.length} completed · ${pct}%`;
+  if(!list.length){document.getElementById('r-list').innerHTML=`<div class="emp"><div class="emp-i">🎉</div><div class="emp-t">No stops today</div><div>No customers on ${tn}.</div></div>`;return;}
+  document.getElementById('r-list').innerHTML=list.map((c,i)=>`<div class="ri ${c.status==='completed'?'sg':c.status==='skipped'?'sr':''}">
+    <div class="rn">${i+1}</div>${avh(c,30)}
+    <div class="rif"><div class="rnm">${c.first} ${c.last}</div><div class="rad">${c.addr}${c.city?', '+c.city:''} ${c.zip||''}</div>
+      <div style="font-size:11px;color:var(--t3)">${c.phone||''} ${c.plan?'· '+c.plan:''}</div>
+      ${c.notes?`<div class="rnt">📝 ${c.notes}</div>`:''}
+    </div>
+    ${sbg(c.status)}
+    <div style="display:flex;gap:5px;flex-shrink:0">
+      <button class="chk ${c.status==='completed'?'ck':''}" onclick="qt(${c.id},'route')" title="Done">✓</button>
+      <button class="skp" onclick="skipS(${c.id})" title="Skip" style="${c.status==='skipped'?'border-color:var(--rd);color:var(--rd)':''}">✕</button>
+      ${c.status!=='pending'?`<button class="skp" onclick="rstS(${c.id})" title="Reset" style="font-size:14px">↺</button>`:''}
+    </div>
+  </div>`).join('');
+}
+function skipS(id){const c=D.customers.find(c=>c.id===id);if(!c)return;c.status=c.status==='skipped'?'pending':'skipped';addAct(`${c.first} ${c.last} — ${c.status==='skipped'?'skipped':'reset'}`,'var(--rd)');sData(CU,D);rRoute();badges();}
+function rstS(id){const c=D.customers.find(c=>c.id===id);if(!c)return;c.status='pending';sData(CU,D);rRoute();badges();}
+function markAll(){const tn=tday();D.customers.filter(c=>c.days.includes(tn)).forEach(c=>c.status='completed');addAct(`All ${tn} stops marked complete`,'var(--g)');sData(CU,D);rRoute();badges();}
+function resetR(){if(!confirm("Reset all of today's stops to pending?"))return;const tn=tday();D.customers.filter(c=>c.days.includes(tn)).forEach(c=>c.status='pending');addAct(`${tn} route reset`,'var(--am)');sData(CU,D);rRoute();badges();}
+
+// ═══ WEEKLY ════════════════════════════════════════
+function rWeek(){
+  const tn=tday();
+  document.getElementById('wk-grid').innerHTML=DAYS.map(d=>{
+    const list=D.customers.filter(c=>c.days.includes(d)),dn=list.filter(c=>c.status==='completed').length,isT=d===tn;
+    return`<div class="wkc"><div class="wkh ${isT?'td':''}"><div class="whd">${d}${isT?' · Today':''}</div><div class="whc">${dn}/${list.length} done</div></div>
+      ${list.length===0?`<div style="padding:8px 10px;font-size:11px;color:var(--t3)">No stops</div>`
+        :list.map(c=>`<div class="wks ${c.status==='completed'?'sg':''}" onclick="qt(${c.id},'weekly')">
+          <div class="wsn"><span class="wsd" style="background:${c.status==='completed'?'var(--g)':c.status==='skipped'?'var(--rd)':'var(--am)'}"></span>${c.first} ${c.last}</div>
+          <div class="wsa">${c.addr}</div>
+        </div>`).join('')}
+    </div>`;
+  }).join('');
+}
+
+// ═══ BILLING ═══════════════════════════════════════
+function rBill(){
+  const tot=D.customers.reduce((a,c)=>a+pp(c.plan),0);
+  document.getElementById('b-stats').innerHTML=`
+    <div class="sc"><div class="sct"><span class="scl">Monthly revenue</span></div><div class="scv" style="color:var(--g)">$${tot.toLocaleString()}</div></div>
+    <div class="sc"><div class="sct"><span class="scl">Annual projection</span></div><div class="scv">$${(tot*12).toLocaleString()}</div></div>
+    <div class="sc"><div class="sct"><span class="scl">Customers</span></div><div class="scv">${D.customers.length}</div></div>
+    <div class="sc"><div class="sct"><span class="scl">Avg / customer</span></div><div class="scv">$${D.customers.length?Math.round(tot/D.customers.length):0}</div></div>`;
+  document.getElementById('b-body').innerHTML=D.customers.map(c=>`<tr>
+    <td><div style="display:flex;align-items:center;gap:7px">${avh(c,24)}<span style="font-weight:500">${c.first} ${c.last}</span></div></td>
+    <td style="color:var(--t2);font-size:12px">${c.addr}${c.city?', '+c.city:''}</td>
+    <td><span class="bg" style="background:${pc2(c.plan)}22;color:${pc2(c.plan)}">${c.plan}</span></td>
+    <td style="font-weight:500;color:var(--g)">$${pp(c.plan)}/mo</td>
+    <td style="font-size:12px;color:var(--t2)">${c.days.join(', ')||'—'}</td>
+    <td>${sbg(c.status)}</td>
+  </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:20px">No customers yet.</td></tr>';
+  document.getElementById('b-plans').innerHTML=D.plans.map(p=>{
+    const cnt=D.customers.filter(c=>c.plan===p.name).length,rev=cnt*p.price,pct=D.customers.length?Math.round((cnt/D.customers.length)*100):0;
+    return`<div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+        <div style="display:flex;align-items:center;gap:7px"><div style="width:9px;height:9px;border-radius:50%;background:${p.color}"></div><span style="font-size:13px;font-weight:500">${p.name}</span><span style="font-size:11px;color:var(--t3)">$${p.price}/mo · ${cnt}</span></div>
+        <span style="font-size:13px;font-weight:500;color:var(--g)">$${rev.toLocaleString()}</span>
+      </div>
+      <div class="pb"><div class="pf" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('')||'<div style="color:var(--t3);font-size:13px">No plans.</div>';
+}
+
+// ═══ CUSTOMER MODAL ════════════════════════════════
+function openAdd(){
+  editId=null;
+  document.getElementById('cm-t').textContent='Add new customer';
+  document.getElementById('cm-s').textContent="Fill in the customer's details.";
+  ['fi','la','ad','ci','st','zi','ph','em','no'].forEach(f=>document.getElementById('m-'+f).value='');
+  document.getElementById('m-pl').innerHTML=D.plans.map(p=>`<option value="${p.name}">${p.name} — $${p.price}/mo${p.desc?' ('+p.desc+')':''}</option>`).join('');
+  document.querySelectorAll('#m-days .dpb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('cm-e').textContent='';
+  document.getElementById('cm').classList.add('on');
+}
+function openEdit(id){
+  const c=D.customers.find(c=>c.id===id);if(!c)return;
+  editId=id;
+  document.getElementById('cm-t').textContent='Edit customer';
+  document.getElementById('cm-s').textContent=`Editing ${c.first} ${c.last}`;
+  document.getElementById('m-fi').value=c.first;document.getElementById('m-la').value=c.last;
+  document.getElementById('m-ad').value=c.addr;document.getElementById('m-ci').value=c.city||'';
+  document.getElementById('m-st').value=c.state||'';document.getElementById('m-zi').value=c.zip||'';
+  document.getElementById('m-ph').value=c.phone||'';document.getElementById('m-em').value=c.email||'';
+  document.getElementById('m-no').value=c.notes||'';
+  document.getElementById('m-pl').innerHTML=D.plans.map(p=>`<option value="${p.name}">${p.name} — $${p.price}/mo</option>`).join('');
+  document.getElementById('m-pl').value=c.plan;
+  const dm={Mon:'Monday',Tue:'Tuesday',Wed:'Wednesday',Thu:'Thursday',Fri:'Friday',Sat:'Saturday'};
+  document.querySelectorAll('#m-days .dpb').forEach(b=>{const f=dm[b.textContent.trim()];b.classList.toggle('on',c.days.includes(f));});
+  document.getElementById('cm-e').textContent='';
+  document.getElementById('cm').classList.add('on');
+}
+function tday2(btn,day){btn.classList.toggle('on');}
+function saveCust(){
+  const fi=document.getElementById('m-fi').value.trim(),la=document.getElementById('m-la').value.trim();
+  const ad=document.getElementById('m-ad').value.trim(),ci=document.getElementById('m-ci').value.trim();
+  const st=document.getElementById('m-st').value.trim(),zi=document.getElementById('m-zi').value.trim();
+  const ph=document.getElementById('m-ph').value.trim(),em=document.getElementById('m-em').value.trim();
+  const pl=document.getElementById('m-pl').value,no=document.getElementById('m-no').value.trim();
+  const dm={Mon:'Monday',Tue:'Tuesday',Wed:'Wednesday',Thu:'Thursday',Fri:'Friday',Sat:'Saturday'};
+  const days=[];document.querySelectorAll('#m-days .dpb.on').forEach(b=>{const f=dm[b.textContent.trim()];if(f)days.push(f);});
+  const e=document.getElementById('cm-e');
+  if(!fi||!la){e.textContent='Name required.';return;}
+  if(!ad){e.textContent='Address required.';return;}
+  if(!ph){e.textContent='Phone required.';return;}
+  if(!days.length){e.textContent='Select at least one pickup day.';return;}
+  if(!pl){e.textContent='Select a plan.';return;}
+  if(editId){
+    const c=D.customers.find(c=>c.id===editId);
+    Object.assign(c,{first:fi,last:la,addr:ad,city:ci,state:st,zip:zi,phone:ph,email:em,plan:pl,days,notes:no});
+    addAct(`Updated: ${fi} ${la}`,'var(--bl)');
+  }else{
+    D.customers.push({id:D.nextId++,first:fi,last:la,addr:ad,city:ci,state:st,zip:zi,phone:ph,email:em,plan:pl,days,notes:no,status:'pending'});
+    addAct(`Added: ${fi} ${la}`,'var(--g)');
+  }
+  sData(CU,D);cm2('cm');rCusts();badges();ppf();
+}
+function openDel(id){delId=id;const c=D.customers.find(c=>c.id===id);document.getElementById('dm-s').textContent=`Delete ${c?c.first+' '+c.last:'this customer'}? This cannot be undone.`;document.getElementById('dm').classList.add('on');}
+function doDel(){const c=D.customers.find(c=>c.id===delId);if(c)addAct(`Deleted: ${c.first} ${c.last}`,'var(--rd)');D.customers=D.customers.filter(c=>c.id!==delId);sData(CU,D);cm2('dm');rCusts();badges();}
+function cm2(id){document.getElementById(id).classList.remove('on');}
+function cout(e,id){if(e.target.id===id)cm2(id);}
+function tday(btn,day){btn.classList.toggle('on');}
+
+// ═══ SETTINGS ══════════════════════════════════════
+function lSet(){
+  document.getElementById('s-own').value=D.owner||'';
+  document.getElementById('s-biz').value=D.bizName||'';
+  document.getElementById('s-ph').value=D.bizPhone||'';
+  document.getElementById('s-pw1').value='';document.getElementById('s-pw2').value='';
+  document.getElementById('s-msg').textContent='';
+  document.getElementById('s-un').textContent='@'+CU;
+  document.getElementById('s-cc').textContent=D.customers.length;
+  document.getElementById('s-pc').textContent=D.plans.length;
+  bSw();rSPl();rAllAcc();
+}
+function bSw(){
+  document.getElementById('s-sw').innerHTML=COLS.map(c=>`<div class="sw ${c===D.accentColor?'pk':''}" data-c="${c}" style="background:${c}" onclick="spk(this)"></div>`).join('');
+}
+function spk(el){document.querySelectorAll('#s-sw .sw').forEach(s=>s.classList.remove('pk'));el.classList.add('pk');D.accentColor=el.dataset.c;setAcc(el.dataset.c);sData(CU,D);}
+function saveSet(){
+  const p1=document.getElementById('s-pw1').value,p2=document.getElementById('s-pw2').value;
+  const msg=document.getElementById('s-msg');
+  if(p1||p2){if(p1.length<6){msg.style.color='var(--rd)';msg.textContent='Password min 6 chars.';return;}if(p1!==p2){msg.style.color='var(--rd)';msg.textContent='Passwords do not match.';return;}const a=gAccs();a[CU].passwordHash=hashPw(p1);sAccs(a);}
+  D.owner=document.getElementById('s-own').value.trim();D.bizName=document.getElementById('s-biz').value.trim();D.bizPhone=document.getElementById('s-ph').value.trim();
+  sData(CU,D);document.getElementById('sb-biz').textContent=D.bizName||'RouteFlow';document.getElementById('sb-own').textContent=D.owner||CU;
+  msg.style.color='var(--g)';msg.textContent='Saved!';setTimeout(()=>{msg.textContent='';msg.style.color='var(--rd)';},2200);
+}
+function rSPl(){
+  document.getElementById('s-plans').innerHTML=D.plans.map((p,i)=>`
+    <div class="pc" id="sp${i}">
+      <div class="pd" style="background:${p.color}"></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:5px">
+        <input class="mi spn" value="${p.name}" placeholder="Plan name" style="background:transparent;border-color:transparent;padding:3px 0;font-size:14px;font-weight:500;color:var(--t)">
+        <input class="mi spd" value="${p.desc||''}" placeholder="Description (optional)" style="background:transparent;border-color:transparent;padding:2px 0;font-size:12px;color:var(--t2)">
+      </div>
+      <div style="display:flex;align-items:center;gap:5px">
+        <span style="font-size:12px;color:var(--t3)">$</span>
+        <input class="mi spp" type="number" value="${p.price}" min="0" style="width:72px;text-align:right;font-family:var(--fh);font-size:16px;font-weight:700;color:var(--g)">
+        <span style="font-size:11px;color:var(--t3)">/mo</span>
+        <button class="rm" onclick="rmPl(${i})">×</button>
+      </div>
+    </div>`).join('');
+}
+function sAddPlan(){D.plans.push({name:'New Plan',price:0,desc:'',color:PC[D.plans.length%PC.length]});rSPl();}
+function rmPl(i){if(!confirm(`Remove "${D.plans[i].name}"?`))return;D.plans.splice(i,1);sData(CU,D);rSPl();}
+function savePlans(){
+  const rows=document.querySelectorAll('#s-plans .pc');const pl=[];let ok=true;
+  rows.forEach((row,i)=>{const n=row.querySelector('.spn').value.trim(),p=parseFloat(row.querySelector('.spp').value),d=row.querySelector('.spd').value.trim();if(!n||isNaN(p))ok=false;else pl.push({...D.plans[i],name:n,price:p,desc:d});});
+  if(!ok){alert('All plans need a name and price.');return;}
+  D.plans=pl;sData(CU,D);ppf();alert('Plans saved!');
+}
+function rAllAcc(){
+  const a=gAccs(),ks=Object.keys(a);
+  document.getElementById('s-accs').innerHTML=ks.map(u=>{
+    const d=gData(u),c=d?d.accentColor:'#00d68f',ini=(a[u].name||u).split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),isCur=u===CU;
+    return`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b)">
+      <div style="width:27px;height:27px;border-radius:50%;background:${c}22;color:${c};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:var(--fh)">${ini}</div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:500">${a[u].name||u}${isCur?' <span style="font-size:10px;color:var(--g);font-weight:600">· you</span>':''}</div><div style="font-size:11px;color:var(--t3)">@${u}</div></div>
+      <div style="font-size:11px;color:var(--t3)">${d?d.customers.length:0} customers</div>
+    </div>`;
+  }).join('')||'<div style="font-size:13px;color:var(--t3)">No accounts.</div>';
+}
+function delAcct(){
+  if(!confirm('Delete your entire account and ALL data? This cannot be undone.'))return;
+  if(!confirm('Final confirmation. Everything will be deleted.'))return;
+  dData(CU);const a=gAccs();delete a[CU];sAccs(a);cSess();location.reload();
+}
+function expData(){
+  const b=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`routeflow_${CU}.json`;a.click();
+}
+function impData(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(!d.customers||!d.plans)throw 0;Object.assign(D,d);sData(CU,D);launch();alert('Imported!');}catch{alert('Invalid file.');}};
+  r.readAsText(f);
+}
+
+// ═══ BOOT ══════════════════════════════════════════
+window.addEventListener('DOMContentLoaded',()=>{
+  rSaved();
+  document.getElementById('l-p').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+  document.getElementById('r-p2').addEventListener('keydown',e=>{if(e.key==='Enter')doRegister();});
+  document.getElementById('l-u').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('l-p').focus();});
+  const sess=gSess();
+  if(sess){const a=gAccs();if(a[sess]){bootUser(sess);return;}cSess();}
+});
+</script>
+</body>
+</html>
