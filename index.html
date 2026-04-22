@@ -7,63 +7,6 @@
 <meta name="description" content="RouteFlow Pro is launching soon. The only software built for trash valet operators. Join the waitlist and lock in 50% off — first 100 operators only.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
-<!-- Mailchimp JSONP handler — no jQuery needed -->
-<script>
-// Mailchimp config — all submissions route here
-const MC_ACTION = 'https://gmail.us22.list-manage.com/subscribe/post-json?u=4df4ff41d6f1929bfd97123be&id=a33077a639&f_id=008bc2e1f0';
-const MC_HONEY  = 'b_4df4ff41d6f1929bfd97123be_a33077a639'; // honeypot field name
-
-/**
- * submitToMailchimp(email, onSuccess, onError)
- * Uses a JSONP callback so there's no CORS issue and no page redirect.
- */
-function submitToMailchimp(email, onSuccess, onError) {
-  if (!email || !email.includes('@') || !email.includes('.')) {
-    onError('Please enter a valid email address.');
-    return;
-  }
-
-  // Build JSONP callback name
-  const cbName = 'mc_cb_' + Date.now();
-  const url = MC_ACTION
-    + '&EMAIL=' + encodeURIComponent(email)
-    + '&' + MC_HONEY + '='      // honeypot — always blank
-    + '&c=' + cbName;
-
-  // Create script tag
-  const script = document.createElement('script');
-  script.src = url;
-
-  // Cleanup helper
-  const cleanup = () => {
-    delete window[cbName];
-    if (script.parentNode) script.parentNode.removeChild(script);
-  };
-
-  // Mailchimp calls window[cbName](data)
-  window[cbName] = function(data) {
-    cleanup();
-    if (data.result === 'success') {
-      onSuccess();
-    } else {
-      // Strip Mailchimp's HTML tags from error messages
-      const msg = (data.msg || 'Something went wrong. Please try again.')
-        .replace(/<[^>]+>/g, '')
-        .replace(/^\d+ - /, '');
-      onError(msg);
-    }
-  };
-
-  // Timeout fallback (5 s)
-  const timer = setTimeout(() => {
-    cleanup();
-    onError('Request timed out. Please try again.');
-  }, 5000);
-
-  script.onload = () => clearTimeout(timer);
-  document.head.appendChild(script);
-}
-</script>
 <style>
 :root{--bg:#090b0e;--bg2:#0f1218;--sf:#13161f;--sf2:#1a1e2a;--bo:rgba(255,255,255,0.06);--bo2:rgba(255,255,255,0.11);--bo3:rgba(255,255,255,0.18);--tx:#edf0f7;--tx2:#7d8699;--tx3:#454d5e;--gr:#00e08f;--gr2:#00b872;--glow:rgba(0,224,143,0.15);--am:#f5a623;--re:#ff4f4f;--fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -407,10 +350,11 @@ footer{background:var(--sf);border-top:1px solid var(--bo);padding:48px 4vw}
   </div>
 
   <div class="hwlwrap">
-    <div class="wf" id="hero-form">
-      <input class="wi" id="hero-email" type="email" placeholder="your@email.com" autocomplete="email" inputmode="email" onkeydown="if(event.key==='Enter')heroJoin()">
-      <button class="wb" onclick="heroJoin()">Claim 50% off →</button>
-    </div>
+    <form class="wf" action="https://gmail.us22.list-manage.com/subscribe/post?u=4df4ff41d6f1929bfd97123be&id=a33077a639" method="POST" target="_blank">
+      <input class="wi" type="email" name="EMAIL" placeholder="your@email.com" autocomplete="email" inputmode="email" required>
+      <div style="position:absolute;left:-5000px" aria-hidden="true"><input type="text" name="b_4df4ff41d6f1929bfd97123be_a33077a639" tabindex="-1" value=""></div>
+      <button class="wb" type="submit">Claim 50% off →</button>
+    </form>
     <div class="wnote">
       <span class="wpill">🔒 No credit card</span>
       <span class="wpill">⚡ Lock in forever pricing</span>
@@ -558,10 +502,11 @@ footer{background:var(--sf);border-top:1px solid var(--bo);padding:48px 4vw}
         <div class="wlpf"><div class="wlpchk">✓</div>Mobile-first design</div>
       </div>
       <div class="wlpform">
-        <div class="wf" id="pricing-form">
-          <input class="wi" id="pricing-email" type="email" placeholder="your@email.com" autocomplete="email" inputmode="email" onkeydown="if(event.key==='Enter')pricingJoin()">
-          <button class="wb" onclick="pricingJoin()">Claim my spot →</button>
-        </div>
+        <form class="wf" action="https://gmail.us22.list-manage.com/subscribe/post?u=4df4ff41d6f1929bfd97123be&id=a33077a639" method="POST" target="_blank">
+          <input class="wi" type="email" name="EMAIL" placeholder="your@email.com" autocomplete="email" inputmode="email" required>
+          <div style="position:absolute;left:-5000px" aria-hidden="true"><input type="text" name="b_4df4ff41d6f1929bfd97123be_a33077a639" tabindex="-1" value=""></div>
+          <button class="wb" type="submit">Claim my spot →</button>
+        </form>
         <div class="wnote" style="justify-content:center"><span class="wpill">🔒 No credit card</span><span class="wpill">⚡ Price locked forever</span></div>
       </div>
       <div class="wlcnote">
@@ -595,10 +540,11 @@ footer{background:var(--sf);border-top:1px solid var(--bo);padding:48px 4vw}
   <p style="position:relative;z-index:1">Join the first 100 operators. Lock in 50% off forever. Run your business like a pro — for less than $5 a month.</p>
   <div class="ctacard">
     <div class="ctaspots"><span>⚡</span><span id="cta-spots">67 founding member spots left</span></div>
-    <div class="wf" style="max-width:100%;margin-bottom:12px" id="cta-form">
-      <input class="wi" id="cta-email" type="email" placeholder="your@email.com" autocomplete="email" inputmode="email" onkeydown="if(event.key==='Enter')ctaJoin()">
-      <button class="wb" onclick="ctaJoin()">Claim 50% off →</button>
-    </div>
+    <form class="wf" style="max-width:100%;margin-bottom:12px" action="https://gmail.us22.list-manage.com/subscribe/post?u=4df4ff41d6f1929bfd97123be&id=a33077a639" method="POST" target="_blank">
+      <input class="wi" type="email" name="EMAIL" placeholder="your@email.com" autocomplete="email" inputmode="email" required>
+      <div style="position:absolute;left:-5000px" aria-hidden="true"><input type="text" name="b_4df4ff41d6f1929bfd97123be_a33077a639" tabindex="-1" value=""></div>
+      <button class="wb" type="submit">Claim 50% off →</button>
+    </form>
     <div class="wnote" style="justify-content:center">
       <span class="wpill">🔒 No card needed</span><span class="wpill">⚡ $4.99/mo forever</span><span class="wpill">✓ Cancel anytime</span>
     </div>
@@ -630,9 +576,12 @@ footer{background:var(--sf);border-top:1px solid var(--bo);padding:48px 4vw}
         <div class="wlmttl">Lock in <span>$4.99/month</span><br>before launch.</div>
         <div class="wlmsub">Join <strong id="mcnt">33</strong> operators already on the list. When 100 spots fill, the price goes to $9.99/month — permanently. No credit card needed to reserve your spot.</div>
         <div class="wlmform">
-          <input class="wlminp" id="mname" placeholder="Your name (optional)" autocomplete="name">
-          <input class="wlminp" id="memail" type="email" placeholder="Email address *" autocomplete="email" inputmode="email" onkeydown="if(event.key==='Enter')modalJoin()">
-          <button class="wlmbtn" onclick="modalJoin()">🔒 Claim my founding member spot →</button>
+          <form action="https://gmail.us22.list-manage.com/subscribe/post?u=4df4ff41d6f1929bfd97123be&id=a33077a639" method="POST" target="_blank" style="display:flex;flex-direction:column;gap:12px;width:100%">
+            <input class="wlminp" type="text" name="FNAME" placeholder="Your name (optional)" autocomplete="given-name">
+            <input class="wlminp" type="email" name="EMAIL" placeholder="Email address *" autocomplete="email" inputmode="email" required>
+            <div style="position:absolute;left:-5000px" aria-hidden="true"><input type="text" name="b_4df4ff41d6f1929bfd97123be_a33077a639" tabindex="-1" value=""></div>
+            <button class="wlmbtn" type="submit">🔒 Claim my founding member spot →</button>
+          </form>
         </div>
         <div class="wlmfine"><span id="mspots">⚡ 67 spots remaining</span> · No spam, ever · Unsubscribe anytime</div>
       </div>
@@ -670,122 +619,16 @@ function allSpots(){
   document.getElementById('mcnt').textContent=taken;
   document.getElementById('mspots').textContent='⚡ '+left+' spots remaining';
 }
-
 function decrement(){
   if(left>1){taken=Math.min(taken+1,total);left=total-taken;allSpots();}
 }
 
-// ── INLINE SUCCESS STATE ──
-function successInline(el) {
-  el.innerHTML = '<div style="text-align:center;padding:14px 20px;background:rgba(0,224,143,.08);border:1px solid rgba(0,224,143,.2);border-radius:10px;color:var(--gr);font-weight:600;font-size:15px;width:100%">🎉 You\'re on the list! Check your email for confirmation.</div>';
-}
-function errorInline(el, msg) {
-  // Show error beneath the input row
-  let errEl = el.querySelector('.mc-inline-err');
-  if (!errEl) {
-    errEl = document.createElement('div');
-    errEl.className = 'mc-inline-err';
-    errEl.style.cssText = 'font-size:12px;color:var(--re);margin-top:8px;text-align:center;width:100%';
-    el.appendChild(errEl);
-  }
-  errEl.textContent = msg;
-}
-function setLoading(btn, loading) {
-  btn.disabled = loading;
-  btn.style.opacity = loading ? '0.7' : '1';
-  btn.textContent = loading ? 'Submitting…' : btn.dataset.orig;
-}
-
-// ── HERO FORM ──
-function heroJoin() {
-  const em  = document.getElementById('hero-email').value.trim();
-  const frm = document.getElementById('hero-form');
-  const btn = frm.querySelector('.wb');
-  if (!btn.dataset.orig) btn.dataset.orig = btn.textContent;
-  if (!em || !em.includes('@') || !em.includes('.')) { openWL('hero'); return; }
-  setLoading(btn, true);
-  submitToMailchimp(em,
-    () => { decrement(); successInline(frm); },
-    (msg) => { setLoading(btn, false); errorInline(frm, msg); }
-  );
-}
-
-// ── PRICING FORM ──
-function pricingJoin() {
-  const em  = document.getElementById('pricing-email').value.trim();
-  const frm = document.getElementById('pricing-form');
-  const btn = frm.querySelector('.wb');
-  if (!btn.dataset.orig) btn.dataset.orig = btn.textContent;
-  if (!em || !em.includes('@') || !em.includes('.')) { openWL('pricing'); return; }
-  setLoading(btn, true);
-  submitToMailchimp(em,
-    () => { decrement(); successInline(frm); },
-    (msg) => { setLoading(btn, false); errorInline(frm, msg); }
-  );
-}
-
-// ── CTA FORM ──
-function ctaJoin() {
-  const em  = document.getElementById('cta-email').value.trim();
-  const frm = document.getElementById('cta-form');
-  const btn = frm.querySelector('.wb');
-  if (!btn.dataset.orig) btn.dataset.orig = btn.textContent;
-  if (!em || !em.includes('@') || !em.includes('.')) { openWL('cta'); return; }
-  setLoading(btn, true);
-  submitToMailchimp(em,
-    () => { decrement(); successInline(frm); },
-    (msg) => { setLoading(btn, false); errorInline(frm, msg); }
-  );
-}
-
-// ── MODAL FORM ──
-function modalJoin() {
-  const em  = document.getElementById('memail').value.trim();
-  const inp = document.getElementById('memail');
-  const btn = document.querySelector('#mform .wlmbtn');
-
-  if (!em || !em.includes('@') || !em.includes('.')) {
-    inp.focus();
-    inp.style.borderColor = 'rgba(255,79,79,.5)';
-    setTimeout(() => inp.style.borderColor = '', 1400);
-    return;
-  }
-
-  if (!btn.dataset.orig) btn.dataset.orig = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Submitting…';
-  btn.style.opacity = '0.7';
-
-  // Clear any previous error
-  const prevErr = document.querySelector('#mform .mc-modal-err');
-  if (prevErr) prevErr.remove();
-
-  submitToMailchimp(em,
-    () => {
-      decrement();
-      document.getElementById('mform').style.display = 'none';
-      document.getElementById('msuccess').style.display = 'block';
-    },
-    (msg) => {
-      btn.disabled = false;
-      btn.textContent = btn.dataset.orig;
-      btn.style.opacity = '1';
-      const errEl = document.createElement('div');
-      errEl.className = 'mc-modal-err';
-      errEl.style.cssText = 'font-size:12px;color:var(--re);margin-top:10px;text-align:center;line-height:1.4';
-      errEl.textContent = msg;
-      btn.parentNode.insertBefore(errEl, btn.nextSibling);
-    }
-  );
-}
-
-// MODAL
+// MODAL — opens when urgency bar / nav button clicked
 function openWL(src){
   document.getElementById('wlmodal').classList.add('open');
   document.body.style.overflow='hidden';
   document.getElementById('mform').style.display='block';
   document.getElementById('msuccess').style.display='none';
-  setTimeout(()=>document.getElementById('memail').focus(),300);
 }
 function closeWL(){
   document.getElementById('wlmodal').classList.remove('open');
