@@ -51,16 +51,34 @@ nav{position:sticky;top:57px;z-index:100;padding:0 4vw;display:flex;align-items:
 @media(max-width:768px){.nlinks{display:none}}
 
 /* WAITLIST FORM SHARED */
-.wf{display:flex;gap:10px;max-width:480px;width:100%}
-.wi{flex:1;padding:14px 16px;border-radius:10px;border:1px solid var(--bo2);background:rgba(255,255,255,.05);color:var(--tx);font-size:15px;font-family:var(--fb);outline:none;transition:all .2s;min-width:0}
-.wi:focus{border-color:rgba(0,224,143,.5);background:rgba(0,224,143,.04);box-shadow:0 0 0 3px rgba(0,224,143,.08)}
-.wi::placeholder{color:var(--tx3)}
-.wb{padding:14px 22px;border-radius:10px;font-size:14px;font-family:var(--fb);font-weight:700;cursor:pointer;background:var(--gr);color:#000;border:none;white-space:nowrap;transition:all .2s;box-shadow:0 0 30px rgba(0,224,143,.25)}
-.wb:hover{background:var(--gr2);transform:translateY(-1px);box-shadow:0 0 50px rgba(0,224,143,.35)}
-.wb:active{transform:scale(.98)}
-@media(max-width:500px){.wf{flex-direction:column}}
-.wnote{font-size:12px;color:var(--tx3);margin-top:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center}
-.wpill{display:inline-flex;align-items:center;gap:4px;background:rgba(0,224,143,.08);border:1px solid rgba(0,224,143,.2);color:var(--gr);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+<form id="waitlist-form">
+  <input type="email" name="EMAIL" placeholder="Enter your email" required />
+  <button type="submit">Claim 50% off →</button>
+</form>
+
+<p id="success-message" style="display:none; color:#00ff99;">
+  You're in 🚀 Check your email.
+</p>
+
+<script>
+const form = document.getElementById("waitlist-form");
+const success = document.getElementById("success-message");
+
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const data = new FormData(form);
+
+  fetch("https://gmail.us22.list-manage.com/subscribe/post?u=XXXX&id=XXXX", {
+    method: "POST",
+    mode: "no-cors",
+    body: data
+  });
+
+  form.style.display = "none";
+  success.style.display = "block";
+});
+</script>
 
 /* HERO */
 .hero{min-height:calc(100vh - 121px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 5vw 70px;position:relative;text-align:center;overflow:hidden}
